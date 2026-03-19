@@ -3,6 +3,27 @@ require('./sourcemap-register.js');module.exports =
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 747:
+/***/ ((module) => {
+
+module.exports = require("fs");;
+
+/***/ }),
+
+/***/ 87:
+/***/ ((module) => {
+
+module.exports = require("os");;
+
+/***/ }),
+
+/***/ 622:
+/***/ ((module) => {
+
+module.exports = require("path");;
+
+/***/ }),
+
 /***/ 4:
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
@@ -281,7 +302,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(186));
 const Action_1 = __webpack_require__(4);
 function run() {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3;
     return __awaiter(this, void 0, void 0, function* () {
         const path = core.getInput('path') || undefined;
         const version = core.getInput('version') || undefined;
@@ -294,14 +315,36 @@ function run() {
         core.info(`Date: "${(_e = entry === null || entry === void 0 ? void 0 : entry.date) !== null && _e !== void 0 ? _e : ""}"`);
         core.info(`Status: "${(_f = entry === null || entry === void 0 ? void 0 : entry.status) !== null && _f !== void 0 ? _f : ""}"`);
         core.info(`Description:\n${(_g = entry === null || entry === void 0 ? void 0 : entry.description) !== null && _g !== void 0 ? _g : ""}\n`);
+        let unreleasedEntry = undefined;
+        if (version !== undefined) {
+            unreleasedEntry = yield new Action_1.Action().run('unreleased', path);
+            core.info(`Unreleased Version: "${(_h = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.version) !== null && _h !== void 0 ? _h : ""}"`);
+            core.info(`  Major: "${(_j = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.versionMajor) !== null && _j !== void 0 ? _j : ""}"`);
+            core.info(`  Minor: "${(_k = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.versionMinor) !== null && _k !== void 0 ? _k : ""}"`);
+            core.info(`  Patch: "${(_l = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.versionPatch) !== null && _l !== void 0 ? _l : ""}"`);
+            core.info(`Date: "${(_m = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.date) !== null && _m !== void 0 ? _m : ""}"`);
+            core.info(`Status: "${(_o = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.status) !== null && _o !== void 0 ? _o : ""}"`);
+            core.info(`Description:\n${(_p = unreleasedEntry === null || unreleasedEntry === void 0 ? void 0 : unreleasedEntry.description) !== null && _p !== void 0 ? _p : ""}\n`);
+        }
         core.endGroup();
-        core.setOutput('version', (_h = entry === null || entry === void 0 ? void 0 : entry.version) !== null && _h !== void 0 ? _h : "");
-        core.setOutput('versionMajor', (_j = entry === null || entry === void 0 ? void 0 : entry.versionMajor) !== null && _j !== void 0 ? _j : "");
-        core.setOutput('versionMinor', (_k = entry === null || entry === void 0 ? void 0 : entry.versionMinor) !== null && _k !== void 0 ? _k : "");
-        core.setOutput('versionPatch', (_l = entry === null || entry === void 0 ? void 0 : entry.versionPatch) !== null && _l !== void 0 ? _l : "");
-        core.setOutput('date', (_m = entry === null || entry === void 0 ? void 0 : entry.date) !== null && _m !== void 0 ? _m : "");
-        core.setOutput('status', (_o = entry === null || entry === void 0 ? void 0 : entry.status) !== null && _o !== void 0 ? _o : "");
-        core.setOutput('description', (_p = entry === null || entry === void 0 ? void 0 : entry.description) !== null && _p !== void 0 ? _p : "");
+        core.setOutput('version', (_q = entry === null || entry === void 0 ? void 0 : entry.version) !== null && _q !== void 0 ? _q : "");
+        core.setOutput('versionMajor', (_r = entry === null || entry === void 0 ? void 0 : entry.versionMajor) !== null && _r !== void 0 ? _r : "");
+        core.setOutput('versionMinor', (_s = entry === null || entry === void 0 ? void 0 : entry.versionMinor) !== null && _s !== void 0 ? _s : "");
+        core.setOutput('versionPatch', (_t = entry === null || entry === void 0 ? void 0 : entry.versionPatch) !== null && _t !== void 0 ? _t : "");
+        core.setOutput('date', (_u = entry === null || entry === void 0 ? void 0 : entry.date) !== null && _u !== void 0 ? _u : "");
+        core.setOutput('status', (_v = entry === null || entry === void 0 ? void 0 : entry.status) !== null && _v !== void 0 ? _v : "");
+        core.setOutput('description', (_w = entry === null || entry === void 0 ? void 0 : entry.description) !== null && _w !== void 0 ? _w : "");
+        if (unreleasedEntry !== undefined) {
+            core.setOutput('unreleased', JSON.stringify({
+                version: (_x = unreleasedEntry.version) !== null && _x !== void 0 ? _x : "",
+                versionMajor: (_y = unreleasedEntry.versionMajor) !== null && _y !== void 0 ? _y : "",
+                versionMinor: (_z = unreleasedEntry.versionMinor) !== null && _z !== void 0 ? _z : "",
+                versionPatch: (_0 = unreleasedEntry.versionPatch) !== null && _0 !== void 0 ? _0 : "",
+                date: (_1 = unreleasedEntry.date) !== null && _1 !== void 0 ? _1 : "",
+                status: (_2 = unreleasedEntry.status) !== null && _2 !== void 0 ? _2 : "",
+                description: (_3 = unreleasedEntry.description) !== null && _3 !== void 0 ? _3 : ""
+            }));
+        }
     });
 }
 function main() {
@@ -705,27 +748,6 @@ function toCommandValue(input) {
 }
 exports.toCommandValue = toCommandValue;
 //# sourceMappingURL=utils.js.map
-
-/***/ }),
-
-/***/ 747:
-/***/ ((module) => {
-
-module.exports = require("fs");;
-
-/***/ }),
-
-/***/ 87:
-/***/ ((module) => {
-
-module.exports = require("os");;
-
-/***/ }),
-
-/***/ 622:
-/***/ ((module) => {
-
-module.exports = require("path");;
 
 /***/ })
 

@@ -14,6 +14,19 @@ async function run(): Promise<void> {
   core.info(`Date: "${entry?.date ?? ""}"`);
   core.info(`Status: "${entry?.status ?? ""}"`);
   core.info(`Description:\n${entry?.description ?? ""}\n`);
+
+  let unreleasedEntry: any = undefined;
+  if (version !== undefined) {
+    unreleasedEntry = await new Action().run('unreleased', path);
+    core.info(`Unreleased Version: "${unreleasedEntry?.version ?? ""}"`);
+    core.info(`  Major: "${unreleasedEntry?.versionMajor ?? ""}"`);
+    core.info(`  Minor: "${unreleasedEntry?.versionMinor ?? ""}"`);
+    core.info(`  Patch: "${unreleasedEntry?.versionPatch ?? ""}"`);
+    core.info(`Date: "${unreleasedEntry?.date ?? ""}"`);
+    core.info(`Status: "${unreleasedEntry?.status ?? ""}"`);
+    core.info(`Description:\n${unreleasedEntry?.description ?? ""}\n`);
+  }
+
   core.endGroup();
 
   core.setOutput('version', entry?.version ?? "");
@@ -23,6 +36,14 @@ async function run(): Promise<void> {
   core.setOutput('date', entry?.date ?? "");
   core.setOutput('status', entry?.status ?? "");
   core.setOutput('description', entry?.description ?? "");
+
+  if (unreleasedEntry !== undefined) {
+    core.setOutput('unreleased', JSON.stringify({
+      version: unreleasedEntry.version ?? "",
+      status: unreleasedEntry.status ?? "",
+      description: unreleasedEntry.description ?? ""
+    }));
+  }
 }
 
 async function main(): Promise<void> {

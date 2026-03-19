@@ -27,6 +27,8 @@ outputs:
     description: 'Status from the changelog entry. Possibly one of the following: prerelease, release, unreleased'
   description:
     description: 'Description from the changelog entry'
+  unreleased:
+    description: 'Changelog entry for Unreleased version (version, status, description)'
 runs:
   using: 'node12'
   main: 'build/dist/index.js'
