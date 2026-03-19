@@ -1,8 +1,6 @@
-# Changelog Parser - GitHub Action
-[![GitHub Action Build](https://github.com/coditory/changelog-parser-action/workflows/Build/badge.svg)](https://github.com/coditory/changelog-parser-action/actions?query=workflow%3ABuild+branch%3Amaster)
-[![Coverage Status](https://coveralls.io/repos/github/coditory/changelog-parser-action/badge.svg?branch=master)](https://coveralls.io/github/coditory/changelog-parser-action?branch=master)
+# Parse Changelog - GitHub Action
 
-> A [GitHub action](https://github.com/marketplace/actions/changelog-parser) that parses `CHANGELOG.md` written in [Keep a Changelog format](https://github.com/olivierlacan/keep-a-changelog).
+> A GitHub action that parses `CHANGELOG.md` written in [Keep a Changelog format](https://github.com/olivierlacan/keep-a-changelog).
 
 ## Usage
 
@@ -21,6 +19,10 @@
 - `date` - Release date from the changelog entry. Example: `2020-08-22`.
 - `status` - Status from the changelog entry. One of: (`prerelease`, `release`, `unreleased`).
 - `description` - Content from the changelog entry found.
+- `unreleased` - JSON object with Unreleased version data (only when `version` input is provided). Contains:
+  - `version` - Always "unreleased"
+  - `status` - Always "unreleased"
+  - `description` - Content from the Unreleased section
 
 ### Example
 Typical `README.md` file:
@@ -70,6 +72,7 @@ versionPatch: "1"
 date: "2020-10-10"
 status: "release"
 description: "### Changed\n- Fixed small bug"
+unreleased: '{"version":"unreleased","status":"unreleased","description":"### Added\\n- Another important feature"}'
 ```
 
 ## Sample usage in actions
@@ -92,11 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up JDK 11
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v4
         with:
           java-version: 11
       - name: Build with Gradle
@@ -104,10 +107,10 @@ jobs:
       - name: Get last version from tag
         id: lasttag
         shell: bash
-        run: echo ::set-output name=version::$(git describe --abbrev=0 --tags --match 'v[0-9]*\.[0-9]*\.[0-9]*' | cut -c2-)
+        run: echo "version=$(git describe --abbrev=0 --tags --match 'v[0-9]*\.[0-9]*\.[0-9]*' | cut -c2-)" >> $GITHUB_OUTPUT
       - name: Parse Changelog Entry
         id: changelog
-        uses: coditory/changelog-parser@v1
+        uses: Xikaro/parse-changelog@v1.1.0
       - name: Release
         if: "github.ref == 'refs/heads/master' && steps.changelog.outputs.version != steps.lasttag.outputs.version"
         env:
@@ -143,15 +146,15 @@ jobs:
     steps:
       - name: Get version from tag
         id: lasttag
-        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
+        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
         shell: bash
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Parse Changelog Entry
         id: changelog
-        uses: coditory/changelog-parser@v1
+        uses: Xikaro/parse-changelog@v1.1.0
         with:
-          version: version: ${{ steps.lasttag.outputs.version }}
+          version: ${{ steps.lasttag.outputs.version }}
       - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1
@@ -161,4 +164,35 @@ jobs:
           tag_name: ${{ steps.changelog.outputs.version }}
           release_name: Release ${{ steps.changelog.outputs.version }}
           body: ${{ steps.changelog.outputs.description }}
+```
+
+### Use Unreleased section data
+
+When parsing a specific version, you can also access the Unreleased section data:
+
+```yaml
+name: Check Unreleased Changes
+
+on: [ push ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Parse latest released version
+        id: changelog
+        uses: Xikaro/parse-changelog@v1.1.0
+        with:
+          version: ${{ github.ref_name }}
+      - name: Check unreleased changes
+        run: |
+          echo "Released version: ${{ steps.changelog.outputs.version }}"
+          echo "Unreleased data: ${{ steps.changelog.outputs.unreleased }}"
+          # Parse JSON to check if there are unreleased changes
+          UNRELEASED_DESC=$(echo '${{ steps.changelog.outputs.unreleased }}' | jq -r '.description')
+          if [ -n "$UNRELEASED_DESC" ]; then
+            echo "There are unreleased changes!"
+          fi
 ```
