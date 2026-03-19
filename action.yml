@@ -1,4 +1,4 @@
-name: 'Changelog Parser Action'
+name: 'Parse Changelog'
 description: 'Parses changelog file'
 branding:
   icon: 'clock'
