@@ -1,12 +1,14 @@
 import * as core from '@actions/core';
-import { Action } from './Action';
+import { Action, ActionResult } from './Action';
 
 async function run(): Promise<void> {
   const path = core.getInput('path') || undefined;
   const version = core.getInput('version') || undefined;
 
   core.startGroup('Parse CHANGELOG');
-  const entry = await new Action().run(version, path);
+  const result: ActionResult = await new Action().run(version, path);
+  const entry = result.entry;
+  const lastEntry = result.lastEntry;
   core.info(`Version: "${entry?.version ?? ""}"`);
   core.info(`  Major: "${entry?.versionMajor ?? ""}"`);
   core.info(`  Minor: "${entry?.versionMinor ?? ""}"`);
@@ -14,6 +16,8 @@ async function run(): Promise<void> {
   core.info(`Date: "${entry?.date ?? ""}"`);
   core.info(`Status: "${entry?.status ?? ""}"`);
   core.info(`Description:\n${entry?.description ?? ""}\n`);
+  core.info(`LastVersion: "${lastEntry?.version ?? ""}"`);
+  core.info(`LastDescription:\n${lastEntry?.description ?? ""}\n`);
   core.endGroup();
 
   core.setOutput('version', entry?.version ?? "");
@@ -23,6 +27,8 @@ async function run(): Promise<void> {
   core.setOutput('date', entry?.date ?? "");
   core.setOutput('status', entry?.status ?? "");
   core.setOutput('description', entry?.description ?? "");
+  core.setOutput('lastVersion', lastEntry?.version ?? "");
+  core.setOutput('lastDescription', lastEntry?.description ?? "");
 }
 
 async function main(): Promise<void> {

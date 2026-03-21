@@ -32,6 +32,14 @@ export class Changelog {
   getEntries(): ChangelogEntry[] {
     return [...this.entries];
   }
+
+  getLastEntry(): ChangelogEntry | undefined {
+    const unreleasedEntry = this.entries.find(entry => entry.status === "unreleased");
+    if (unreleasedEntry != null) {
+      return unreleasedEntry;
+    }
+    return this.getLatestVersion();
+  }
 }
 
 export interface ChangelogEntry {

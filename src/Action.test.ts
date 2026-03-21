@@ -43,16 +43,16 @@ test('should load CHANGELOG from default location', async () => {
   await writeChangelog([
     "## 1.0.0",
   ]);
-  const entry = await action.run();
-  expect(entry?.version).toBe("1.0.0");
+  const result = await action.run();
+  expect(result.entry?.version).toBe("1.0.0");
 });
 
 test('should load CHANGELOG from specific location', async () => {
   await writeChangelog([
     "## 2.0.0",
   ], "CHANGELOGGG.md");
-  const entry = await action.run(undefined, "CHANGELOGGG.md");
-  expect(entry?.version).toBe("2.0.0");
+  const result = await action.run(undefined, "CHANGELOGGG.md");
+  expect(result.entry?.version).toBe("2.0.0");
 });
 
 test('should read latest released version from CHANGELOG using entry order', async () => {
@@ -62,21 +62,22 @@ test('should read latest released version from CHANGELOG using entry order', asy
     "## 3.0.0",
     "## 1.0.0"
   ]);
-  const entry = await action.run();
-  expect(entry?.version).toBe("2.0.0");
+  const result = await action.run();
+  expect(result.entry?.version).toBe("2.0.0");
 });
 
 test('should return empty entry if no version was specified and changelog is empty', async () => {
   await writeChangelog([""]);
-  const entry = await action.run();
-  expect(entry).toBeUndefined();
+  const result = await action.run();
+  expect(result.entry).toBeUndefined();
 });
 
 test('should throw error on missing entry', async () => {
   expect.assertions(1);
   await writeChangelog([""]);
   try {
-    await action.run("0.0.1");
+    const result = await action.run("0.0.1");
+    expect(result.entry?.version).toEqual("0.0.1");
   } catch (e) {
     expect(e.message).toEqual("Could not find CHANGELOG entry for version: 0.0.1");
   }
