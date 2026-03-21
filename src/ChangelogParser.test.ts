@@ -230,21 +230,21 @@ test("should parse CHANGELOG without dates", () => {
     });
   });
 
-test('should throw error on undefined entry header', () => {
+test('should throw error on undefined entry header', async () => {
   expect.assertions(1);
   try {
     ChangelogParser.parseChangelog("## something");
   } catch (e) {
-    expect((e as Error).message).toEqual("Could not parse CHANGELOG entry:\nsomething");
+    expect(e.message).toEqual("Could not parse CHANGELOG entry:\nsomething");
   }
 });
 
-test('should return empty entries when changelog is empty', () => {
+test('should return empty entries when changelog is empty', async () => {
   const changelog = ChangelogParser.parseChangelog("");
   expect(changelog.getEntries()).toStrictEqual([]);
 });
 
-test('should return empty entries when changelog has no version headers', () => {
+test('should return empty entries when changelog has no version headers', async () => {
   const changelog = ChangelogParser.parseChangelog([
     "# Changelog",
     "Some notice"
@@ -252,7 +252,7 @@ test('should return empty entries when changelog has no version headers', () => 
   expect(changelog.getEntries()).toStrictEqual([]);
 });
 
-test('should throw error on duplicated versions', () => {
+test('should throw error on duplicated versions', async () => {
   expect.assertions(1);
   try {
     ChangelogParser.parseChangelog([
@@ -260,6 +260,6 @@ test('should throw error on duplicated versions', () => {
       "## 1.0.0 - 2020.10.10",
     ].join("\n"));
   } catch (e) {
-    expect((e as Error).message).toEqual("Duplicated version in changelog: 1.0.0");
+    expect(e.message).toEqual("Duplicated version in changelog: 1.0.0");
   }
 });

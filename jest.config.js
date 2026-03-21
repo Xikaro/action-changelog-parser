@@ -1,5 +1,4 @@
-/** @type {import('jest').Config} */
-export default {
+module.exports = {
   clearMocks: true,
   moduleFileExtensions: ['js', 'ts'],
   coverageProvider: 'v8',
@@ -8,10 +7,7 @@ export default {
   testMatch: ['**/*.test.ts'],
   testRunner: 'jest-circus/runner',
   transform: {
-    '^.+\\.ts$': ['ts-jest', {
-      useESM: true
-    }]
+    '^.+\\.ts$': 'ts-jest'
   },
-  verbose: true,
-  extensionsToTreatAsEsm: ['.ts']
-};
+  verbose: true
+}
